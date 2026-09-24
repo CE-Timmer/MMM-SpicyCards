@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Connect Spotify · SpotifyCards</title><link rel="stylesheet" href="/setup.css"></head>
+<body><main><header><span class="eyebrow">MMM-SPOTIFYCARDS</span><h1>A little setup.<br>A lot of music.</h1><p>Connect your listening and bring the words to your cards.</p></header>
+<div id="feedback" role="status" aria-live="polite"></div>
+<section><div class="heading"><span class="step">01</span><h2>Connect the lyrics</h2><span class="badge" id="lyrics-status">Checking…</span></div>
+<p>Sign in directly on Spotify in a dedicated browser window. Once Web Player is ready, we’ll save its access token for Spicy Lyrics.</p>
+<button id="web-login" class="primary" disabled>Log in to Spotify Web Player <span>↗</span></button><button id="cancel" class="secondary" hidden>Cancel login</button>
+<p id="login-state" class="hint" aria-live="polite">The login window opens on this computer. Your password is entered only on Spotify.</p>
+<p class="hint">The saved token is used by Spicy Lyrics’ service to retrieve lyrics. When it expires, use this button again. Your dedicated browser profile keeps your Spotify sign-in.</p>
+<details><summary>Already have a web-player token?</summary><form id="token-form"><label for="token">Web-player access token</label><input id="token" type="password" autocomplete="off" spellcheck="false" required placeholder="Paste your token or Bearer value"><button class="secondary" type="submit">Save token</button></form><p class="hint">Use a token from your own Spotify Web Player session. A developer app token is not a replacement.</p></details></section>
+<section><div class="heading"><span class="step">02</span><h2>Playback connection</h2><span class="badge" id="playback-status">Checking…</span></div>
+<p id="playback-mode">The cards can use your saved Web Player session for playback too. No developer app is needed for that route; Spotify must accept the session for playback access.</p>
+<details><summary>Optional: a separate playback login with automatic token refresh</summary><p class="hint">Use your own developer app for a separate user authorization. This connection renews playback access without renewing the web-player token used for lyrics.</p>
+<form id="playback-form"><label for="client-id">Spotify app client ID</label><input id="client-id" autocomplete="off" spellcheck="false" required pattern="[a-fA-F0-9]{32}" placeholder="Your 32-character client ID"><p class="hint">In your <a href="https://developer.spotify.com/dashboard" target="_blank" rel="noreferrer">Spotify developer app</a>, add this exact redirect URI:</p><code id="redirect">http://127.0.0.1:8888/callback</code><button class="secondary" type="submit">Connect Spotify playback ↗</button></form></details></section>
+<footer>Credentials are saved privately on this computer. The cards never receive your tokens.</footer></main><script src="/setup.js"></script></body></html>

@@ -1,0 +1,7 @@
+{
+  "sp_dc": "YOUR_SPOTIFY_SP_DC_COOKIE",
+  "session": {
+    "refreshIntervalMinutes": 50,
+    "reloadDelaySeconds": 60
+  }
+}

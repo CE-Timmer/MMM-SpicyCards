@@ -1,0 +1,70 @@
+/* Only the page shell is restyled. Upstream lyric elements and animation CSS
+   are bundled unchanged from the cloned Spicy Lyrics source tree. */
+:root {
+  color-scheme: dark;
+  --spice-sidebar: #111;
+  --spice-text: #fff;
+  --color-text-primary: #faf5f2;
+  --color-text-secondary: #ffffff94;
+  --w-semibold: 650;
+  --w-regular: 400;
+}
+html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: transparent; }
+* { box-sizing: border-box; }
+#SpicyLyricsPage.SpotifyCard {
+  width: 100%; height: 100%; position: relative; isolation: isolate;
+  overflow: hidden; container-type: size; color: var(--color-text-primary);
+  font-family: "Inter", "Segoe UI", sans-serif;
+  border: 1px solid #ffffff24; border-radius: 28px;
+  background: radial-gradient(ellipse at 15% 0%, #664752, transparent 70%), #1d1a24;
+  --LyricsLeftSidePadding: 5cqw;
+  --LyricsRightSidePadding: 5cqw;
+}
+#SpicyLyricsPage.SpotifyCard::before {
+  content: ""; position: absolute; inset: -70px; z-index: -2;
+  background: var(--card-artwork) center / cover;
+  filter: blur(65px) brightness(.4) saturate(1.2); opacity: .8;
+}
+#SpicyLyricsPage.SpotifyCard::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: linear-gradient(135deg, #ffffff08, transparent 40%, #09090e55);
+}
+#SpicyLyricsPage.SpotifyCard .ContentBox {
+  display: flex; flex-direction: column; width: 100%; height: 100%; padding: 57px 0 16px; min-height: 0;
+}
+#SpicyLyricsPage.SpotifyCard .ViewControls {
+  position: absolute; top: 15px; left: 24px; right: 20px;
+  display: flex; align-items: center; justify-content: space-between; z-index: 15;
+}
+#SpicyLyricsPage .CardBrand { font-size: 10px; font-weight: 700; letter-spacing: .17em; opacity: .7; }
+#SpicyLyricsPage .CardFullscreen {
+  width: 30px; height: 30px; border-radius: 50%; border: 1px solid #ffffff30;
+  background: #ffffff0a; color: white; font: 21px/1 "Segoe UI", sans-serif; cursor: pointer;
+}
+#SpicyLyricsPage .CardFullscreen:hover { background: #ffffff25; }
+#SpicyLyricsPage .CardFullscreen:focus-visible { outline: 2px solid #f4d7ce; outline-offset: 3px; }
+#SpicyLyricsPage.SpotifyCard .NowBar { display: none; }
+#SpicyLyricsPage.SpotifyCard .LyricsContainer { flex: 1; min-height: 0; height: auto; }
+#SpicyLyricsPage.SpotifyCard .LyricsContent { --DefaultLyricsSize: clamp(23px, 4.4cqw, 35px); }
+#SpicyLyricsPage.SpotifyCard .SpicyLyricsScrollContainer { padding-inline: 36px; }
+#SpicyLyricsPage.SpotifyCard .LyricsContent .line { line-height: 1.45; }
+#SpicyLyricsPage.SpotifyCard .loaderContainer { display: none; }
+#SpicyLyricsPage.SpotifyCard .CardNotice {
+  display: grid; place-items: center; height: 100%; margin: 0; padding: 24px 40px;
+  text-align: center; font-size: 18px; font-weight: 450; color: #f5e9edbb;
+}
+#SpicyLyricsPage.SpotifyCard.CardVertical { border-radius: 32px; }
+#SpicyLyricsPage.SpotifyCard.CardVertical .NowBar { display: block; flex-shrink: 0; width: 100%; padding: 6px 30px 14px; }
+#SpicyLyricsPage.SpotifyCard .Header { display: flex; flex-direction: column; align-items: center; text-align: center; }
+#SpicyLyricsPage.SpotifyCard .MediaBox { width: min(48cqw, 25cqh); aspect-ratio: 1; margin-bottom: 19px; position: relative; }
+#SpicyLyricsPage.SpotifyCard .MediaImageContainer { width: 100%; height: 100%; }
+#SpicyLyricsPage.SpotifyCard .MediaImageContainer img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; box-shadow: 0 16px 36px #0005; }
+#SpicyLyricsPage.SpotifyCard .MediaContent { display: none; }
+#SpicyLyricsPage.SpotifyCard .SongName { font-size: 23px; line-height: 1.2; font-weight: 750; letter-spacing: -.035em; overflow-wrap: anywhere; }
+#SpicyLyricsPage.SpotifyCard .Artists { margin-top: 7px; font-size: 14px; color: #ffffff94; overflow-wrap: anywhere; }
+#SpicyLyricsPage.SpotifyCard.CardVertical .LyricsContent { --DefaultLyricsSize: clamp(22px, 6.5cqw, 30px); }
+#SpicyLyricsPage.SpotifyCard .simplebar-track { opacity: 0; }
+@media (max-height: 550px) {
+  #SpicyLyricsPage.SpotifyCard.CardVertical .MediaBox { width: 90px; margin-bottom: 9px; }
+  #SpicyLyricsPage.SpotifyCard.CardVertical .NowBar { padding-bottom: 8px; }
+}

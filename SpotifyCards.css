@@ -1,0 +1,5 @@
+.spotify-cards-host { width: var(--card-width, 720px); max-width: 100%; height: var(--card-height, 330px); }
+.spotify-cards-host iframe { display: block; border: 0; width: 100%; height: 100%; border-radius: 28px; box-shadow: 0 24px 75px #0006; background: transparent; }
+.spotify-cards-host.portrait { width: var(--portrait-width, 440px); height: min(830px, 94dvh); }
+.spotify-cards-host.fullscreen { position: fixed; inset: 0; z-index: 99999; width: 100%; max-width: none; height: 100dvh; display: grid; place-items: center; background: #08090d; padding: 3dvh 18px; box-sizing: border-box; }
+.spotify-cards-host.fullscreen iframe { width: min(var(--portrait-width, 440px), 100%); height: min(830px, 94dvh); border-radius: 32px; }

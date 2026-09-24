@@ -1,0 +1,3 @@
+[submodule "upstream/spicy-lyrics"]
+	path = upstream/spicy-lyrics
+	url = https://github.com/Spikerko/spicy-lyrics.git

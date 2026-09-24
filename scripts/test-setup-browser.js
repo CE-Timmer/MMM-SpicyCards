@@ -1,0 +1,53 @@
+"use strict";
+const { chromium } = require("playwright");
+const { EventEmitter } = require("node:events");
+const fs = require("node:fs/promises");
+const os = require("node:os");
+const path = require("node:path");
+const assert = require("node:assert/strict");
+const { createSetupServer } = require("../lib/setup-server");
+const { SpotifyService } = require("../lib/service");
+const { WebPlayerLogin } = require("../lib/web-player-login");
+async function main() {
+  const dir = await fs.mkdtemp(path.join(os.tmpdir(), "spotifycards-setup-ui-"));
+  const credentialFile = path.join(dir, "credentials.json");
+  const context = new EventEmitter();
+  context.pages = () => [{ goto: async () => {} }];
+  context.close = async () => context.emit("close");
+  const login = new WebPlayerLogin({ credentialFile, launcher: async () => context, env: {}, fetchImpl: async () => Response.json({ id: "test-account" }) });
+  const server = createSetupServer({ service: new SpotifyService({ credentialFile, env: {} }), login });
+  let browser;
+  try {
+    await new Promise(resolve => server.listen(0, "127.0.0.1", resolve));
+    browser = await chromium.launch(process.env.PLAYWRIGHT_BROWSER_PATH ? { executablePath: process.env.PLAYWRIGHT_BROWSER_PATH } : { channel: process.platform === "win32" ? "msedge" : "chromium" });
+    const page = await browser.newPage({ viewport: { width: 1100, height: 1050 } });
+    const errors = []; page.on("pageerror", e => errors.push(e.message));
+    await page.goto(`http://127.0.0.1:${server.address().port}`);
+    await page.getByRole("button", { name: "Log in to Spotify Web Player" }).click();
+    await page.getByText("Sign in in the Spotify window.", { exact: false }).waitFor();
+    assert.equal(await page.locator("#web-login").isDisabled(), true);
+    const token = "synthetic-web-player-session-for-ui";
+    context.emit("response", { ok: () => true, url: () => "https://api-partner.spotify.com/pathfinder/v2/query", request: () => ({ frame: () => ({ url: () => "https://open.spotify.com/" }), allHeaders: async () => ({ authorization: `Bearer ${token}` }) }) });
+    await page.getByText("Web-player token saved.", { exact: false }).waitFor();
+    assert.equal(await page.locator("#lyrics-status").innerText(), "Configured");
+    assert.equal(await page.locator("#playback-status").innerText(), "Configured");
+    assert.ok(!(await page.content()).includes(token));
+    await page.getByText("Already have a web-player token?").click();
+    await page.locator("#token").fill("invalid");
+    await page.getByRole("button", { name: "Save token", exact: true }).click();
+    await page.getByText("Paste a complete web-player bearer token.").waitFor();
+    await page.locator("#token").fill("manual-demo-token-for-setup-testing");
+    await page.getByRole("button", { name: "Save token", exact: true }).click();
+    await page.getByText("Token saved. Your cards will pick it up on their next retry.", { exact: true }).waitFor();
+    assert.equal(await page.locator("#token").inputValue(), "");
+    await page.getByText("Already have a web-player token?").click();
+    await fs.mkdir("artifacts", { recursive: true });
+    await page.screenshot({ path: "artifacts/setup.png", fullPage: true });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.screenshot({ path: "artifacts/setup-mobile.png", fullPage: true });
+    assert.ok(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
+    assert.deepEqual(errors, []);
+    console.log("Setup browser checks passed: login states, capture/save, manual fallback, no token display, narrow layout.");
+  } finally { await browser?.close(); await login.cancel(); await new Promise(resolve => server.close(resolve)); await fs.rm(dir, { recursive: true, force: true }); }
+}
+main().catch(error => { console.error(error); process.exitCode = 1; });

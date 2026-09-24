@@ -1,0 +1,6 @@
+{
+  "repository": "https://github.com/Spikerko/spicy-lyrics",
+  "commit": "d804ca34c39e255495ddeaee61dc1a9eb6f81197",
+  "license": "AGPL-3.0",
+  "description": "Unmodified source clone pinned as a Git submodule. Standalone adaptations live outside this directory."
+}
