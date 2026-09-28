@@ -21,6 +21,10 @@ async function main() {
     await frame.locator(".line.Active").filter({ hasText: "quiet" }).waitFor();
     await page.waitForTimeout(800);
     assert.equal(await frame.locator(".NowBar").isVisible(), false);
+    await page.evaluate(() => window.card.setCard("vertical"));
+    await frame.locator(".NowBar").waitFor({ state: "visible" });
+    await page.evaluate(() => window.card.setCard("horizontal"));
+    await frame.locator(".NowBar").waitFor({ state: "hidden" });
     await fs.mkdir("artifacts", { recursive: true });
     await page.screenshot({ path: "artifacts/horizontal.png" });
     await frame.locator(".CardFullscreen").click();

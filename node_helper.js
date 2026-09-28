@@ -3,16 +3,20 @@ const NodeHelper = require("node_helper");
 const { SpotifyService } = require("./lib/service");
 const { SessionRefresher } = require("./lib/session-refresher");
 const { startDesktopBridge } = require("./lib/desktop-bridge");
+const { saveCredentials } = require("./lib/credential-store");
+const { runtimePaths } = require("./lib/runtime-config");
 
 module.exports = NodeHelper.create({
   start() {
     this.service = new SpotifyService();
+    this.runtime = runtimePaths(this.service.env, this.service.credentialFile);
     this.sessionRefresher = new SessionRefresher({
+      configFile: this.runtime.configFile,
+      sessionFile: this.service.sessionFile,
       onToken: token => this.service.setWebPlayerToken(token),
       onSession: session => this.service.setSessionCredentials(session),
       onError: code => console.warn(`[MMM-SpotifyCards] ${code}: check config.json sp_dc and the token helper; retrying in one minute.`)
     });
-    this.sessionRefresher.start();
     this.clients = new Set();
     this.pollIntervals = new Map();
     this.interval = 3000;
@@ -27,8 +31,23 @@ module.exports = NodeHelper.create({
       onListening: (host, port) => console.log(`[MMM-SpotifyCards] Desktop bridge listening on ${host}:${port}`)
     });
   },
-  socketNotificationReceived(notification, payload) {
+  async socketNotificationReceived(notification, payload) {
     if (notification !== "SPOTIFYCARDS_SUBSCRIBE" || typeof payload?.instanceId !== "string") return;
+    if (typeof payload.dev_token === "string" && /^sl_sk_[A-Za-z0-9_-]+$/.test(payload.dev_token.trim())) {
+      this.service.setDeveloperKey(payload.dev_token.trim());
+    }
+    if (typeof payload.sp_dc === "string" && payload.sp_dc.trim() && !/\s/.test(payload.sp_dc.trim())) {
+      const cookie = payload.sp_dc.trim();
+      if (cookie !== this.cookie) {
+        try {
+          await saveCredentials(this.runtime.configFile, { sp_dc: cookie });
+          const wasStarted = this.sessionRefresher.started;
+          this.cookie = cookie;
+          if (wasStarted) this.sessionRefresher.run();
+          else this.sessionRefresher.start();
+        } catch { this.sendSocketNotification("SPOTIFYCARDS_ERROR", { instanceId: payload.instanceId, code: "credentials-invalid" }); }
+      }
+    }
     this.clients.add(payload.instanceId);
     const interval = Number(payload.pollInterval);
     this.pollIntervals.set(payload.instanceId, Number.isFinite(interval) ? Math.max(2000, interval) : 3000);

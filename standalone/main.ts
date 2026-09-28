@@ -129,7 +129,7 @@ window.addEventListener("message", event => {
     options = data || {};
     setOffset(options.lyricsOffset);
     $simpleLyricsMode.set(matchMedia("(prefers-reduced-motion: reduce)").matches);
-    layout(fullscreen || options.layout === "vertical");
+    layout(fullscreen || (options.card || options.layout) === "vertical");
   } else if (type === "playback") {
     const changed = playback?.track?.id !== data.track?.id;
     updatePlayback(data);
@@ -152,7 +152,7 @@ window.addEventListener("message", event => {
     else page.querySelector(".CardBrand")!.textContent = messages[data.code] || messages["playback-unavailable"];
   } else if (type === "fullscreen") {
     fullscreen = !!data;
-    layout(fullscreen || options.layout === "vertical");
+    layout(fullscreen || (options.card || options.layout) === "vertical");
     page.querySelector(".CardFullscreen")!.textContent = fullscreen ? "×" : "⤢";
   } else if (type === "suspend") { suspended = true; $lyricsContainerExists.set(false); }
   else if (type === "resume") { suspended = false; if (rawLyrics) $lyricsContainerExists.set(true); }

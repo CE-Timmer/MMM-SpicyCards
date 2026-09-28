@@ -5,7 +5,8 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const path = require("node:path");
 function helper() {
-  const context = { module: { exports: {} }, require: name => name === "node_helper" ? { create: value => value } : name === "./lib/desktop-bridge" ? { startDesktopBridge: () => null } : name === "./lib/session-refresher" ? { SessionRefresher: class { start() {} stop() {} load() {} requestRefresh() {} } } : require(path.join(__dirname, "..", name)),
+  const saves = [];
+  const context = { module: { exports: {} }, require: name => name === "node_helper" ? { create: value => value } : name === "./lib/credential-store" ? { saveCredentials: async (file, values) => saves.push({ file, values }) } : name === "./lib/desktop-bridge" ? { startDesktopBridge: () => null } : name === "./lib/session-refresher" ? { SessionRefresher: class { start() { this.started = true; } stop() {} load() {} requestRefresh() {} run() {} } } : require(path.join(__dirname, "..", name)),
     setTimeout: (_, delay) => ({ delay }), clearTimeout() {}, Date, console };
   vm.runInNewContext(fs.readFileSync(path.join(__dirname, "../node_helper.js"), "utf8"), context);
   const instance = context.module.exports;
@@ -13,8 +14,24 @@ function helper() {
   instance.sent = [];
   instance.sendSocketNotification = (type, data) => instance.sent.push({ type, data });
   instance.clients.add("test");
+  instance.saves = saves;
   return instance;
 }
+test("MagicMirror subscription configures cookie renewal and developer key without broadcasting either", async () => {
+  const h = helper();
+  let key, polls = 0;
+  h.service = { setDeveloperKey: value => { key = value; } };
+  h.poll = () => { polls++; };
+  await h.socketNotificationReceived("SPOTIFYCARDS_SUBSCRIBE", { instanceId: "mirror", pollInterval: 3000,
+    sp_dc: "cookie-value", dev_token: "sl_sk_example_key" });
+  assert.equal(key, "sl_sk_example_key");
+  assert.equal(h.saves.length, 1);
+  assert.equal(h.saves[0].values.sp_dc, "cookie-value");
+  assert.equal(h.sessionRefresher.started, true);
+  assert.equal(polls, 1);
+  assert.ok(!JSON.stringify(h.sent).includes("cookie-value"));
+  assert.ok(!JSON.stringify(h.sent).includes("sl_sk_example_key"));
+});
 test("late lyrics for an old track cannot replace current lyrics", async () => {
   const h = helper();
   let resolveA;

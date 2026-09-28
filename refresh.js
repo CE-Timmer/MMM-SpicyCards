@@ -2,12 +2,14 @@
 
 const path = require("node:path");
 const { spawnSync } = require("node:child_process");
+const { runtimePaths } = require("./lib/runtime-config");
 
 const root = __dirname;
+const { configFile, sessionFile } = runtimePaths();
 const executable = path.join(root, "spotify-webplayer-token", "bin", `spotify-webplayer-token${process.platform === "win32" ? ".exe" : ""}`);
 const result = spawnSync(executable, [
-  "-config", path.join(root, "config.json"),
-  "-session", path.join(root, "session.json")
+  "-config", configFile,
+  "-session", sessionFile
 ], { cwd: root, stdio: "inherit", shell: false, windowsHide: true, timeout: 35000 });
 
 if (result.error?.code === "ENOENT") {

@@ -9,7 +9,6 @@ Spotify Desktop or Spicetify installed.
 - Original Spicy Lyrics syllable/letter animation, line and static rendering,
   duet alignment, background vocals, interludes, virtualized scrolling, and credits.
 - Spotify Web API playback and the official Spicy Lyrics developer API for lyrics.
-  Keys and tokens stay in the Node helper.
 
 ## Install
 
@@ -39,13 +38,21 @@ Add this to MagicMirror's `config/config.js`:
     fullscreenWidth: 440,
     pollInterval: 3000,
     lyricsOffset: 0,
-    showTransliteration: false
+    showTransliteration: false,
+    card: "horizontal", // "horizontal" lyrics card or "vertical" cover + lyrics card
+    sp_dc: "YOUR_SPOTIFY_SP_DC_COOKIE",
+    dev_token: "sl_sk_YOUR_SPICY_LYRICS_SERVER_KEY"
   }
 }
 ```
 
 `lyricsOffset` is milliseconds; positive values advance the displayed lyrics.
-`layout: "vertical"` can also show the portrait card directly in a mirror region.
+Set `card: "vertical"` to show the portrait card directly in a mirror region.
+The expand button still toggles the fullscreen card. `layout` remains accepted
+for older configurations. The `sp_dc` cookie renews Spotify Web Player playback
+access; `dev_token` authorizes the [official Spicy Lyrics API](https://developers.spicylyrics.org/docs).
+MagicMirror loads `config/config.js` in its browser, so these values are visible to
+clients that can access the mirror. Restrict access to your MagicMirror server.
 All instances share the configured Spotify account but have isolated renderers.
 Fullscreen fills the mirror/browser viewport; it does not change the OS window mode.
 
@@ -174,20 +181,14 @@ On Windows, `~` means your user home directory. The file will contain:
 ## Connect Spicy Lyrics
 
 Create an application at [Spicy Lyrics for Developers](https://developers.spicylyrics.org/docs)
-and obtain a **server key** (`sl_sk_...`). Put it in the private credentials file,
-normally `~/.config/MMM-SpotifyCards/credentials.json`, as `spicyLyricsSecretKey`.
-You can import it without placing the key on a command line:
-
-```sh
-printf '%s' '{"spicyLyricsSecretKey":"sl_sk_YOUR_KEY"}' | npm run credentials
-```
+and put its **server key** (`sl_sk_...`) in `dev_token` in MagicMirror's module
+configuration above. Add your Spotify Web Player `sp_dc` cookie there too.
 
 The helper sends `GET https://api.spicylyrics.org/v1/lyrics/{trackId}` with the
 key in the Authorization header. It passes the complete `Body` lyrics object to
 the upstream renderer, including source and attribution data. This endpoint does
-not use Spotify browser or desktop tokens. Keep the key out of `config.json`,
-which is inside MagicMirror's served module directory. Key changes are read on
-the next lyrics request; cached lyrics may remain for up to an hour.
+not use Spotify browser or desktop tokens. Changes to `config/config.js` require
+a MagicMirror restart; cached lyrics may remain for up to an hour.
 
 Environment variables can override file values:
 
@@ -201,23 +202,18 @@ Environment variables can override file values:
 | `SPOTIFY_WEB_PLAYER_TOKEN` | Browser session fallback for playback and legacy lyrics requests |
 | `SPICY_LYRICS_SECRET_KEY` | Spicy Lyrics developer server key for the official lyrics API |
 
-`config.json` contains the Web Player cookie and module settings. Copy the
-supplied example on the mirror:
-
-```sh
-cp config.example.json config.json
-chmod 600 config.json
-```
-
-Set `sp_dc` in `config.json` to the cookie value from the Spotify Web Player.
+The module copies `sp_dc` from MagicMirror's configuration to its private
+runtime file at `~/.config/MMM-SpotifyCards/config.json` for the Go refresher.
 `npm run build` also compiles the bundled Go token refresher, so Go 1.20 or newer
 must be installed on the machine performing the build.
 
-Store the current bearer separately in `session.json`:
+The current bearer is stored privately in
+`~/.config/MMM-SpotifyCards/session.json`. For manual provisioning, create it there:
 
 ```sh
-cp session.example.json session.json
-chmod 600 session.json
+mkdir -p ~/.config/MMM-SpotifyCards
+cp session.example.json ~/.config/MMM-SpotifyCards/session.json
+chmod 600 ~/.config/MMM-SpotifyCards/session.json
 ```
 
 ```json
@@ -229,8 +225,8 @@ chmod 600 session.json
 ```
 
 At start and then at most every 50 minutes, the helper runs `node refresh.js`. That script
-runs the compiled Go helper, which reads `sp_dc` from `config.json` and writes the
-retrieved bearer to `SPOTIFY_WEB_TOKEN` in `session.json` while preserving its
+runs the compiled Go helper, which reads the private runtime `config.json` and writes the
+retrieved bearer to `SPOTIFY_WEB_TOKEN` in the private `session.json` while preserving its
 other values. It also saves `SPOTIFY_WEB_TOKEN_EXPIRES_AT` (Unix milliseconds).
 The module loads successful refreshes immediately and checks the file again after
 `reloadDelaySeconds`. Renewal is scheduled two minutes before expiry when that is
@@ -238,7 +234,7 @@ earlier than the configured interval. Failed refreshes retry after one minute;
 anonymous, empty, or expired tokens never overwrite the saved session. A revoked
 or expired cookie must be replaced with a fresh `sp_dc` value.
 Authentication failures also request early renewal, limited to once per minute.
-External changes to `session.json` are picked up on the next playback poll.
+External changes to the private `session.json` are picked up on the next playback poll.
 
 When a developer key is configured, lyrics use the official developer API.
 The [desktop bridge](spicetify/README.md) and Web Player bearer remain available
@@ -246,7 +242,8 @@ for playback or older installations without a developer key. Optional `SPOTIFY_C
 `SPOTIFY_REFRESH_TOKEN` credentials renew playback independently; rotated refresh
 tokens are saved back to `session.json`. Add `SPOTIFY_CLIENT_SECRET` only when the
 issuing flow requires it. With no separate playback credentials, playback also
-uses the cookie-derived bearer. `session.json` is ignored by Git.
+uses the cookie-derived bearer. The private `session.json` is outside the served
+module directory.
 
 Run `node refresh.js` to check cookie renewal manually. It reports expiry or an
 error without printing the bearer. Token retrieval does not prove Spotify playback

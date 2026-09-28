@@ -9,7 +9,7 @@
       this.root.style.setProperty("--card-width", `${Math.max(240, Number(options.width) || 720)}px`);
       this.root.style.setProperty("--card-height", `${Math.max(180, Number(options.height) || 330)}px`);
       this.root.style.setProperty("--portrait-width", `${Math.max(260, Number(options.fullscreenWidth) || 440)}px`);
-      this.root.classList.toggle("portrait", options.layout === "vertical");
+      this.root.classList.toggle("portrait", (options.card || options.layout) === "vertical");
       this.frame = document.createElement("iframe");
       this.frame.title = "Spicy Lyrics · SpotifyCards";
       this.frame.src = source;
@@ -42,6 +42,12 @@
     }
     setLyrics(data) { this.send("lyrics", data); }
     setError(code) { this.send("error", { code }); }
+    setCard(card) {
+      if (card !== "horizontal" && card !== "vertical") return;
+      this.options = { ...this.options, card };
+      this.root.classList.toggle("portrait", card === "vertical");
+      this.send("config", this.options);
+    }
     suspend() { this.send("suspend"); }
     resume() { this.send("resume"); }
     toggleFullscreen() {

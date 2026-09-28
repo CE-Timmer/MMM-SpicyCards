@@ -42,6 +42,15 @@ test("developer API uses its server key and decodes the documented Body", async 
   await service.lyrics(id);
   assert.equal(requests, 1);
 });
+test("MagicMirror developer key overrides the private credential fallback", async t => {
+  const service = await setup(t, async (_url, init) => {
+    assert.equal(init.headers.Authorization, "Bearer sl_sk_from_magicmirror");
+    return json({ Body: raw, Status: 200, Type: "object" });
+  });
+  await fs.writeFile(service.credentialFile, JSON.stringify({ spicyLyricsSecretKey: "sl_sk_old_key" }));
+  service.setDeveloperKey("sl_sk_from_magicmirror");
+  assert.equal((await service.lyrics(id)).raw.Type, "Syllable");
+});
 
 test("developer API maps not-found and rate-limit responses", async t => {
   let status = 404, calls = 0;
