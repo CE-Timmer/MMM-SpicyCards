@@ -12,7 +12,13 @@ Spotify Desktop or Spicetify installed.
 
 ## Install
 
-Node 20+ and a current MagicMirror installation are required.
+Node 20+, Go 1.20+, and a current MagicMirror installation are required. Go builds
+the bundled Web Player token refresher. Install Go from [go.dev/dl](https://go.dev/dl/),
+then confirm it is available before building:
+
+```sh
+go version
+```
 
 ```sh
 cd ~/MagicMirror/modules
@@ -204,8 +210,6 @@ Environment variables can override file values:
 
 The module copies `sp_dc` from MagicMirror's configuration to its private
 runtime file at `~/.config/MMM-SpotifyCards/config.json` for the Go refresher.
-`npm run build` also compiles the bundled Go token refresher, so Go 1.20 or newer
-must be installed on the machine performing the build.
 
 The current bearer is stored privately in
 `~/.config/MMM-SpotifyCards/session.json`. For manual provisioning, create it there:
