@@ -107,13 +107,7 @@ async function start() {
   const brand = document.createElement("span");
   brand.className = "CardBrand";
   brand.textContent = "◉  SPICY LYRICS";
-  const button = document.createElement("button");
-  button.type = "button";
-  button.className = "CardFullscreen";
-  button.textContent = "⤢";
-  button.setAttribute("aria-label", "Toggle fullscreen card");
-  button.onclick = () => send("toggle-fullscreen");
-  controls.append(brand, button);
+  controls.append(brand);
   notice("Waiting for Spotify…");
   ready = true;
   send("ready");
@@ -153,7 +147,6 @@ window.addEventListener("message", event => {
   } else if (type === "fullscreen") {
     fullscreen = !!data;
     layout(fullscreen || (options.card || options.layout) === "vertical");
-    page.querySelector(".CardFullscreen")!.textContent = fullscreen ? "×" : "⤢";
   } else if (type === "suspend") { suspended = true; $lyricsContainerExists.set(false); }
   else if (type === "resume") { suspended = false; if (rawLyrics) $lyricsContainerExists.set(true); }
 });

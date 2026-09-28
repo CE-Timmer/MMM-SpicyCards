@@ -7137,13 +7137,7 @@ globalThis.Spicetify = {
     const brand = document.createElement("span");
     brand.className = "CardBrand";
     brand.textContent = "\u25C9  SPICY LYRICS";
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "CardFullscreen";
-    button.textContent = "\u2922";
-    button.setAttribute("aria-label", "Toggle fullscreen card");
-    button.onclick = () => send("toggle-fullscreen");
-    controls.append(brand, button);
+    controls.append(brand);
     notice("Waiting for Spotify\u2026");
     ready = true;
     send("ready");
@@ -7183,7 +7177,6 @@ globalThis.Spicetify = {
     } else if (type === "fullscreen") {
       fullscreen = !!data;
       layout(fullscreen || (options.card || options.layout) === "vertical");
-      page.querySelector(".CardFullscreen").textContent = fullscreen ? "\xD7" : "\u2922";
     } else if (type === "suspend") {
       suspended = true;
       $lyricsContainerExists.set(false);

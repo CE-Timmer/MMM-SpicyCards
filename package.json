@@ -13,6 +13,7 @@
     "test:browser": "node scripts/test-browser.js",
     "test:setup-browser": "node scripts/test-setup-browser.js",
     "auth": "node scripts/authorize.js",
+    "oauth": "node scripts/authorize.js",
     "setup": "node scripts/setup.js",
     "bridge": "node scripts/bridge.js",
     "bridge:install": "node scripts/install-bridge.js",

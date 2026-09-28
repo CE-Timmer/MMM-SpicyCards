@@ -144,11 +144,10 @@ may let Spotify reconnect without entering your password again. This is an
 on-demand reconnection, not an OAuth refresh token for the Web Player session.
 The mirror rereads saved credentials on retry. Stop setup with Ctrl+C when done.
 
-The page also offers an **optional separate playback authorization** using your
-own developer app. This provides refreshable playback access independently of
-the lyrics session. The command-line equivalent is below.
+For reliable playback state, authorize your own Spotify developer app. This
+provides refreshable playback access independently of the lyrics session.
 
-## Optional separate playback authorization
+## Recommended: renewable Spotify playback authorization
 
 Create a Spotify developer app and add this exact redirect URI:
 
@@ -156,17 +155,28 @@ Create a Spotify developer app and add this exact redirect URI:
 http://127.0.0.1:8888/callback
 ```
 
-Then, on a computer where you can open a browser:
+Create the private credentials file, add your application's Client ID, then run
+the authorization command on the MagicMirror host:
 
 ```sh
-npm run auth -- YOUR_SPOTIFY_CLIENT_ID
+mkdir -p ~/.config/MMM-SpotifyCards
+cp credentials.example.json ~/.config/MMM-SpotifyCards/credentials.json
+chmod 600 ~/.config/MMM-SpotifyCards/credentials.json
+# Edit credentials.json and replace YOUR_SPOTIFY_CLIENT_ID with your Client ID.
+npm run oauth
+```
+
+Alternatively, skip the template and pass the Client ID directly:
+
+```sh
+npm run oauth -- YOUR_SPOTIFY_CLIENT_ID
 ```
 
 Open the printed authorization URL on that same computer. The PKCE flow requests
 `user-read-playback-state`, saves a refresh token, and does not require a client
-secret. If you authorize on another computer, copy the resulting credentials file
-to the mirror user's path below. Playback refreshes automatically. An app-only
-client-credentials token cannot read a user's currently playing song.
+secret. The credentials file is kept outside the served module directory and
+playback refreshes automatically. An app-only client-credentials token cannot
+read a user's currently playing song.
 
 Default credentials file, **outside MagicMirror's served module directory**:
 

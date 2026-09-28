@@ -50,7 +50,7 @@ module.exports = NodeHelper.create({
     }
     this.clients.add(payload.instanceId);
     const interval = Number(payload.pollInterval);
-    this.pollIntervals.set(payload.instanceId, Number.isFinite(interval) ? Math.max(2000, interval) : 3000);
+    this.pollIntervals.set(payload.instanceId, Number.isFinite(interval) ? Math.max(30000, interval) : 30000);
     this.interval = Math.min(...this.pollIntervals.values());
     if (this.latest) this.broadcast("SPOTIFYCARDS_PLAYBACK", this.latest);
     if (this.latestLyrics) this.broadcast("SPOTIFYCARDS_LYRICS", this.latestLyrics);
