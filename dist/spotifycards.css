@@ -1034,25 +1034,28 @@ body {
     "Inter",
     "Segoe UI",
     sans-serif;
-  border: 1px solid #ffffff24;
-  border-radius: 28px;
-  background:
-    radial-gradient(
-      ellipse at 15% 0%,
-      #664752,
-      transparent 70%),
-    #1d1a24;
+  background: transparent;
   --LyricsLeftSidePadding: 5cqw;
   --LyricsRightSidePadding: 5cqw;
 }
 #SpicyLyricsPage.SpotifyCard::before {
   content: "";
   position: absolute;
-  inset: -70px;
+  inset: -85px;
   z-index: -2;
   background: var(--card-artwork) center / cover;
-  filter: blur(65px) brightness(.4) saturate(1.2);
-  opacity: .8;
+  filter: blur(70px) brightness(.42) saturate(1.2);
+  opacity: .9;
+  -webkit-mask-image:
+    radial-gradient(
+      ellipse 88% 105% at 50% 45%,
+      #000 0 40%,
+      transparent 78%);
+  mask-image:
+    radial-gradient(
+      ellipse 88% 105% at 50% 45%,
+      #000 0 40%,
+      transparent 78%);
 }
 #SpicyLyricsPage.SpotifyCard::after {
   content: "";
@@ -1061,11 +1064,15 @@ body {
   z-index: -1;
   pointer-events: none;
   background:
-    linear-gradient(
-      135deg,
-      #ffffff08,
-      transparent 40%,
-      #09090e55);
+    radial-gradient(
+      ellipse 82% 110% at 50% 44%,
+      #17121bc4 0 33%,
+      #09090bc0 58%,
+      #000 100%),
+    radial-gradient(
+      ellipse at 18% 0%,
+      #7a4e5c80,
+      transparent 58%);
 }
 #SpicyLyricsPage.SpotifyCard .ContentBox {
   display: flex;
@@ -1138,9 +1145,6 @@ body {
   font-size: 18px;
   font-weight: 450;
   color: #f5e9edbb;
-}
-#SpicyLyricsPage.SpotifyCard.CardVertical {
-  border-radius: 32px;
 }
 #SpicyLyricsPage.SpotifyCard.CardVertical .NowBar {
   display: block;

@@ -5,14 +5,14 @@
     constructor(root, options = {}, source = "standalone/index.html") {
       this.root = root;
       this.options = options;
-      this.root.className = "spotify-cards-host";
+      this.root.className = "spotify-cards-host spotify-cards-idle";
       this.root.style.setProperty("--card-width", `${Math.max(240, Number(options.width) || 720)}px`);
       this.root.style.setProperty("--card-height", `${Math.max(180, Number(options.height) || 330)}px`);
       this.root.style.setProperty("--portrait-width", `${Math.max(260, Number(options.fullscreenWidth) || 440)}px`);
       this.root.classList.toggle("portrait", (options.card || options.layout) === "vertical");
       this.frame = document.createElement("iframe");
       this.frame.title = "Spicy Lyrics · SpotifyCards";
-      this.frame.src = `${source}?v=2`;
+      this.frame.src = `${source}?v=3`;
       this.root.append(this.frame);
       this.pending = new Map();
       this.handler = event => {
@@ -36,6 +36,7 @@
       this.frame.contentWindow.postMessage({ spotifyCards: true, type, data }, location.origin);
     }
     setPlayback(data) {
+      this.root.classList.toggle("spotify-cards-idle", !data?.playing || !data?.track);
       if (this.pending.get("playback")?.track?.id !== data.track?.id) this.pending.delete("lyrics");
       this.pending.delete("error");
       this.send("playback", data);
