@@ -12,7 +12,7 @@
       this.root.classList.toggle("portrait", (options.card || options.layout) === "vertical");
       this.frame = document.createElement("iframe");
       this.frame.title = "Spicy Lyrics · SpotifyCards";
-      this.frame.src = `${source}?v=3`;
+      this.frame.src = `${source}?v=4`;
       this.root.append(this.frame);
       this.pending = new Map();
       this.handler = event => {

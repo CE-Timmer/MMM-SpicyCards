@@ -1065,14 +1065,14 @@ body {
   pointer-events: none;
   background:
     radial-gradient(
-      ellipse 82% 110% at 50% 44%,
-      #17121bc4 0 33%,
-      #09090bc0 58%,
-      #000 100%),
+      ellipse 84% 118% at 50% 46%,
+      #17121bc4 0 28%,
+      #09090bac 50%,
+      transparent 82%),
     radial-gradient(
       ellipse at 18% 0%,
-      #7a4e5c80,
-      transparent 58%);
+      #7a4e5c70,
+      transparent 54%);
 }
 #SpicyLyricsPage.SpotifyCard .ContentBox {
   display: flex;
