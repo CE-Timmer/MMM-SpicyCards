@@ -103,11 +103,7 @@ async function start() {
   page.innerHTML = await res.text();
   setPage(page);
   page.classList.add("SpicyRenderer", "SpotifyCard");
-  const controls = page.querySelector(".ViewControls")!;
-  const brand = document.createElement("span");
-  brand.className = "CardBrand";
-  brand.textContent = "◉  SPICY LYRICS";
-  controls.append(brand);
+  page.querySelector(".ViewControls")?.remove();
   notice("Waiting for Spotify…");
   ready = true;
   send("ready");
@@ -127,7 +123,6 @@ window.addEventListener("message", event => {
   } else if (type === "playback") {
     const changed = playback?.track?.id !== data.track?.id;
     updatePlayback(data);
-    page.querySelector(".CardBrand")!.textContent = "◉  SPICY LYRICS";
     if (changed || !data.track) {
       rawLyrics = null;
       metadata(data);
@@ -143,7 +138,6 @@ window.addEventListener("message", event => {
     const progress = SpotifyPlayer.GetPosition() - (Number(options.lyricsOffset) || 0);
     if (playback) updatePlayback({ ...playback, progress, playing: false });
     if (!rawLyrics) notice(messages[data.code] || messages["playback-unavailable"]);
-    else page.querySelector(".CardBrand")!.textContent = messages[data.code] || messages["playback-unavailable"];
   } else if (type === "fullscreen") {
     fullscreen = !!data;
     layout(fullscreen || (options.card || options.layout) === "vertical");
