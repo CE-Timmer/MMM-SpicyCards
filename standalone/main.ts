@@ -94,6 +94,8 @@ function metadata(data: any) {
 function layout(vertical: boolean) {
   page.classList.toggle("Fullscreen", vertical);
   page.classList.toggle("CardVertical", vertical);
+  page.classList.toggle("CardHorizontal", !vertical);
+  page.classList.toggle("MediaRight", !vertical && options.mediaPosition === "right");
   requestAnimationFrame(() => { ScrollSimplebar?.recalculate(); ResetLastLine(); });
 }
 function send(type: string) { window.parent.postMessage({ spotifyCards: true, type }, location.origin); }

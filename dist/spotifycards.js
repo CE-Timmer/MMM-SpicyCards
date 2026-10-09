@@ -7119,6 +7119,8 @@ globalThis.Spicetify = {
   function layout(vertical) {
     page.classList.toggle("Fullscreen", vertical);
     page.classList.toggle("CardVertical", vertical);
+    page.classList.toggle("CardHorizontal", !vertical);
+    page.classList.toggle("MediaRight", !vertical && options.mediaPosition === "right");
     requestAnimationFrame(() => {
       ScrollSimplebar?.recalculate();
       ResetLastLine();

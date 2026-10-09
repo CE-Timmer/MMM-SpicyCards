@@ -45,7 +45,8 @@ Add this to MagicMirror's `config/config.js`:
     pollInterval: 3000,
     lyricsOffset: 0,
     showTransliteration: false,
-    card: "horizontal", // "horizontal" lyrics card or "vertical" cover + lyrics card
+    card: "horizontal", // landscape: cover, metadata, and five lyric lines
+    mediaPosition: "left", // "left" or "right" of the landscape lyrics
     sp_dc: "YOUR_SPOTIFY_SP_DC_COOKIE",
     dev_token: "sl_sk_YOUR_SPICY_LYRICS_SERVER_KEY"
   }
@@ -54,6 +55,10 @@ Add this to MagicMirror's `config/config.js`:
 
 `lyricsOffset` is milliseconds; positive values advance the displayed lyrics.
 Set `card: "vertical"` to show the portrait card directly in a mirror region.
+The landscape card keeps five lyric lines visible and places the cover, title, and
+artist alongside them. Set `mediaPosition: "right"` to put that media group on
+the right; it defaults to `"left"`. Both cards use a transparent, artwork-tinted
+ambient glow so they blend into MagicMirror's black background.
 The expand button still toggles the fullscreen card. `layout` remains accepted
 for older configurations. The `sp_dc` cookie renews Spotify Web Player playback
 access; `dev_token` authorizes the [official Spicy Lyrics API](https://developers.spicylyrics.org/docs).

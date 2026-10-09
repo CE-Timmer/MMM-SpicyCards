@@ -2,6 +2,7 @@
 Module.register("MMM-SpotifyCards", {
   defaults: { width: 720, height: 330, fullscreenWidth: 440, pollInterval: 3000,
     lyricsOffset: 0, showTransliteration: false, layout: "horizontal", card: null,
+    mediaPosition: "left",
     sp_dc: "", dev_token: "" },
   getStyles() { return ["SpotifyCards.css"]; },
   getScripts() { return ["card-view.js"]; },
