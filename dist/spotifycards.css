@@ -1017,7 +1017,7 @@ body {
   height: 100%;
   margin: 0;
   overflow: hidden;
-  background: transparent;
+  background: #000;
 }
 * {
   box-sizing: border-box;
@@ -1034,45 +1034,9 @@ body {
     "Inter",
     "Segoe UI",
     sans-serif;
-  background: transparent;
+  background: #000;
   --LyricsLeftSidePadding: 5cqw;
   --LyricsRightSidePadding: 5cqw;
-}
-#SpicyLyricsPage.SpotifyCard::before {
-  content: "";
-  position: absolute;
-  inset: -85px;
-  z-index: -2;
-  background: var(--card-artwork) center / cover;
-  filter: blur(70px) brightness(.42) saturate(1.2);
-  opacity: .9;
-  -webkit-mask-image:
-    radial-gradient(
-      ellipse 88% 105% at 50% 45%,
-      #000 0 40%,
-      transparent 78%);
-  mask-image:
-    radial-gradient(
-      ellipse 88% 105% at 50% 45%,
-      #000 0 40%,
-      transparent 78%);
-}
-#SpicyLyricsPage.SpotifyCard::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background:
-    radial-gradient(
-      ellipse 84% 118% at 50% 46%,
-      #17121bc4 0 28%,
-      #09090bac 50%,
-      transparent 82%),
-    radial-gradient(
-      ellipse at 18% 0%,
-      #7a4e5c70,
-      transparent 54%);
 }
 #SpicyLyricsPage.SpotifyCard .ContentBox {
   display: flex;
@@ -1230,32 +1194,6 @@ body {
 }
 #SpicyLyricsPage.SpotifyCard.CardHorizontal.MediaRight .LyricsContainer {
   order: 1;
-}
-#SpicyLyricsPage.SpotifyCard.CardHorizontal::before {
-  inset: auto;
-  width: 74%;
-  height: 145%;
-  left: 13%;
-  top: -23%;
-  border-radius: 50%;
-  -webkit-mask-image: none;
-  mask-image: none;
-  filter: blur(64px) brightness(.4) saturate(1.15);
-  opacity: .72;
-}
-#SpicyLyricsPage.SpotifyCard.CardHorizontal::after {
-  inset: auto;
-  width: 88%;
-  height: 132%;
-  left: 6%;
-  top: -16%;
-  border-radius: 50%;
-  background:
-    radial-gradient(
-      ellipse at 50% 48%,
-      #151219bd 0 24%,
-      #08090aaa 54%,
-      transparent 76%);
 }
 @media (max-width: 520px) {
   #SpicyLyricsPage.SpotifyCard.CardHorizontal .ContentBox {
